@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Reveal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Introduction / Gate -->
+        <div id="gate-screen" class="screen active">
+            <h1 class="title">The Timeline</h1>
+            <p class="subtitle">Enter the special date to unlock.</p>
+            
+            <div class="input-group">
+                <input type="text" id="password-input" placeholder="MM-DD-YYYY" maxlength="10">
+                <button id="unlock-btn">→</button>
+            </div>
+            <p id="error-msg" class="error-msg hidden">Try again.</p>
+        </div>
+
+        <!-- Success / Reveal -->
+        <div id="reveal-screen" class="screen hidden">
+            <h1 class="title">Welcome</h1>
+            <p class="subtitle">Everything is ready for you.</p>
+            <a href="https://www.notion.so/be7938700c0d4a8fb0080b1726e3d1a7?v=38efbbb9b46445dd9b05971a3a09cc11" id="final-link" class="reveal-btn" target="_blank">Enter The Vault</a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
