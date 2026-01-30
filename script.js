@@ -1,9 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('password-input');
     const unlockBtn = document.getElementById('unlock-btn');
+    const agreeBtn = document.getElementById('agree-btn');
     const errorMsg = document.getElementById('error-msg');
+    
+    // Screens
     const gateScreen = document.getElementById('gate-screen');
+    const agreementScreen = document.getElementById('agreement-screen');
     const revealScreen = document.getElementById('reveal-screen');
+    
     const inputGroup = document.querySelector('.input-group');
 
     // The magic date
@@ -13,28 +18,45 @@ document.addEventListener('DOMContentLoaded', () => {
         const value = passwordInput.value.trim();
         
         if (value === TARGET_DATE) {
-            success();
+            goToAgreement();
         } else {
             fail();
         }
     }
 
-    function success() {
-        // Play sound
+    // Step 1: Transition from Password -> Agreement
+    function goToAgreement() {
+        // Play success sound
         playSuccessSound();
 
         // UI Transitions
         errorMsg.classList.add('hidden');
         
-        // 1. Fade out gate
+        // Fade out gate
         gateScreen.classList.remove('active');
         gateScreen.classList.add('hidden');
 
-        // 2. Wait a split second, then fade in reveal
+        // Fade in Agreement
+        setTimeout(() => {
+            agreementScreen.classList.remove('hidden');
+            agreementScreen.classList.add('active');
+        }, 500); 
+    }
+
+    // Step 2: Transition from Agreement -> Reveal
+    function goToReveal() {
+        // Optional: Play a smaller confirmation sound? 
+        // For now, just silent transition is classy.
+
+        // Fade out Agreement
+        agreementScreen.classList.remove('active');
+        agreementScreen.classList.add('hidden');
+
+        // Fade in Reveal
         setTimeout(() => {
             revealScreen.classList.remove('hidden');
             revealScreen.classList.add('active');
-        }, 500); // Matches CSS transition speed roughly
+        }, 500);
     }
 
     function fail() {
@@ -48,8 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             inputGroup.classList.remove('shake');
         }, 500);
-        
-        // Clear input? Maybe not, easier to fix a typo if it stays.
     }
 
     // Audio Context for the "Chime"
@@ -94,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Event Listeners
     unlockBtn.addEventListener('click', checkPassword);
+    agreeBtn.addEventListener('click', goToReveal);
 
     passwordInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {

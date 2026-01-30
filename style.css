@@ -26,12 +26,13 @@ body {
 
 .container {
     width: 100%;
-    max-width: 400px;
+    max-width: 600px; /* Slightly wider for reading text */
     padding: 2rem;
     text-align: center;
     position: relative;
     /* Height constraint to keep screens in same place */
-    min-height: 400px; 
+    height: 80vh; 
+    max-height: 700px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -47,6 +48,9 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .screen.active {
@@ -168,4 +172,85 @@ input:focus {
 .reveal-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 25px var(--accent-glow);
+}
+
+/* Agreement Screen specific styles */
+.agreement-title {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+.agreement-subtitle {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 1.5rem;
+    max-width: 80%;
+}
+
+.agreement-content {
+    background: rgba(255,255,255,0.03);
+    padding: 1.5rem;
+    border-radius: 8px;
+    max-height: 50vh; /* Allow scrolling if text is long */
+    overflow-y: auto;
+    text-align: left;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 173, 214, 0.1);
+}
+
+/* Custom Scrollbar */
+.agreement-content::-webkit-scrollbar {
+    width: 6px;
+}
+.agreement-content::-webkit-scrollbar-track {
+    background: #000; 
+}
+.agreement-content::-webkit-scrollbar-thumb {
+    background: #333; 
+    border-radius: 3px;
+}
+
+.clause {
+    margin-bottom: 1.5rem;
+}
+
+.clause h3 {
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.clause p {
+    font-size: 0.85rem;
+    color: #ccc;
+    line-height: 1.5;
+}
+
+.clause:last-child {
+    margin-bottom: 0;
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    background: var(--accent-color);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--accent-glow);
 }
