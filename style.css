@@ -254,3 +254,49 @@ input:focus {
     color: var(--bg-color);
     box-shadow: 0 0 15px var(--accent-glow);
 }
+
+/* --- POSTER / TECH REVEAL STYLES --- */
+.poster-container {
+    position: relative;
+    max-width: 90vw;
+    max-height: 80vh;
+    padding: 10px;
+    border: 1px solid rgba(255, 173, 214, 0.3); /* Faint pink border */
+    box-shadow: 0 0 30px rgba(255, 173, 214, 0.1);
+    background: rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+.reveal-poster {
+    display: block;
+    max-width: 100%;
+    max-height: 60vh; /* Keep it from taking over too much */
+    object-fit: contain;
+    filter: grayscale(20%);
+    transition: filter 2s ease;
+}
+
+/* When poster screen is active, blur in the image */
+#poster-screen.active .reveal-poster {
+    animation: focusIn 2.5s ease-out forwards;
+}
+
+@keyframes focusIn {
+    0% { filter: blur(20px) grayscale(100%); transform: scale(1.05); opacity: 0; }
+    40% { opacity: 1; }
+    100% { filter: blur(0) grayscale(0%); transform: scale(1); }
+}
+
+/* Glitch Animation Class (triggered by JS) */
+.glitch-effect {
+    animation: glitch-anim 0.25s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+    0% { transform: translate(0); filter: hue-rotate(0deg); }
+    20% { transform: translate(-3px, 3px); filter: hue-rotate(90deg) invert(0.1); }
+    40% { transform: translate(-3px, -3px); filter: hue-rotate(-90deg) contrast(2); }
+    60% { transform: translate(3px, 3px); filter: sepia(1); }
+    80% { transform: translate(3px, -3px); filter: invert(0.9); }
+    100% { transform: translate(0); }
+}
