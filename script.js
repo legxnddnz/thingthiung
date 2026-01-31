@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Screens
     const gateScreen = document.getElementById('gate-screen');
     const agreementScreen = document.getElementById('agreement-screen');
+    const posterScreen = document.getElementById('poster-screen');
     const revealScreen = document.getElementById('reveal-screen');
+
+    // Poster Image for effects
+    const posterImg = document.querySelector('.reveal-poster');
     
     const inputGroup = document.querySelector('.input-group');
 
@@ -43,20 +47,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500); 
     }
 
-    // Step 2: Transition from Agreement -> Reveal
+    // Step 2: Transition from Agreement -> Poster -> Reveal
     function goToReveal() {
-        // Optional: Play a smaller confirmation sound? 
-        // For now, just silent transition is classy.
-
         // Fade out Agreement
         agreementScreen.classList.remove('active');
         agreementScreen.classList.add('hidden');
 
-        // Fade in Reveal
+        // Sequence: Poster -> Glitch -> Final Link
         setTimeout(() => {
-            revealScreen.classList.remove('hidden');
-            revealScreen.classList.add('active');
+            // 1. Show Poster
+            posterScreen.classList.remove('hidden');
+            posterScreen.classList.add('active');
+
+            // 2. Wait for user to absorb the image (3.5s)
+            setTimeout(() => {
+                // 3. Trigger Glitch Effect
+                posterImg.classList.add('glitch-effect');
+                
+                // Play a little synth "static" or just reuse a note? 
+                // Let's reuse a quick dissonance note for effect
+                playGlitchSound();
+
+                // 4. Hold Glitch for 1.5s then cut to black
+                setTimeout(() => {
+                    posterScreen.classList.remove('active');
+                    posterScreen.classList.add('hidden'); // Fade out poster
+
+                    // 5. Show Final Reveal
+                    setTimeout(() => {
+                        revealScreen.classList.remove('hidden');
+                        revealScreen.classList.add('active');
+                    }, 800); // Slight delay for dramatic pause
+                    
+                }, 1500);
+
+            }, 4000); 
+
         }, 500);
+    }
+
+    function playGlitchSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            
+            // Dissonant Cluster
+            [100, 110, 120, 800, 1200].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth'; // Harsh sound
+                osc.frequency.value = freq;
+                
+                const now = ctx.currentTime;
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start(now);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                
+                osc.stop(now + 0.5);
+            });
+        } catch(e) {}
     }
 
     function fail() {
