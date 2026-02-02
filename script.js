@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Particle System ---
     function initParticles() {
+        console.log("Memory Fragments (Particles) System: Initialized");
         const container = document.getElementById('particles-container');
         const words = ["FASHION", "DREAMS", "YOUR EYES", "FUTURE", "J:RA"];
         
@@ -133,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(() => {
             if (!agreementScreen.classList.contains('active')) return; // Stop if screen hidden
 
+            console.log("Spawning particle...");
             const span = document.createElement('span');
             span.classList.add('particle');
             span.innerText = words[Math.floor(Math.random() * words.length)];
