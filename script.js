@@ -48,27 +48,37 @@ document.addEventListener('DOMContentLoaded', () => {
         // Animate Numbers
         let currentYear = 2024;
         const target = "FUTURE"; 
-        const speed = 50; // ms per tick
+        let currentSpeed = 150; // Start slow (ms)
+        const minSpeed = 20;    // Max speed (ms)
+        const decay = 0.9;      // Speed increase factor per tick
 
-        const interval = setInterval(() => {
+        function tick() {
             currentYear++;
             yearCounter.innerText = currentYear;
-
-            // Random glitch effect on text sometimes?
-            // Keep it simple for now.
+            
+            playTickerSound(currentYear); // Play blip for every year
 
             if (currentYear >= 2099) {
-                clearInterval(interval);
+                // Reached destination
                 yearCounter.innerText = target;
-                yearCounter.classList.add('glitch-effect'); // Reuse glitch class lightly
+                yearCounter.classList.add('glitch-effect'); 
                 
+                playFutureGlitchSound(); // Heavy glitch sound
+
                 // Hold for a moment then go to Agreement
                 setTimeout(() => {
                     yearCounter.classList.remove('glitch-effect');
                     goToAgreement();
                 }, 1500);
+            } else {
+                // Acceleration Logic
+                currentSpeed = Math.max(minSpeed, currentSpeed * decay);
+                setTimeout(tick, currentSpeed);
             }
-        }, speed);
+        }
+
+        // Start the loop
+        setTimeout(tick, 500); // Initial delay before counting starts
     }
 
     // Step 2: Ticker -> Agreement
@@ -159,6 +169,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 800);
     }
 
+
+    function playTickerSound(val) {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            // Rising pitch as we go further into the future
+            // Base 800Hz + (val - 2024) * 15
+            const pitch = 800 + ((val - 2024) * 15);
+
+            osc.type = 'square'; // Clicky, digital sound
+            osc.frequency.setValueAtTime(pitch, ctx.currentTime);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.start();
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05); // Short blip
+            
+            osc.stop(ctx.currentTime + 0.05);
+        } catch(e) {}
+    }
+
+    function playFutureGlitchSound() {
+         try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+
+            // Create a burst of noise or heavy saw waves
+            for(let i=0; i<5; i++) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                
+                // Random low frequencies for "impact"
+                osc.frequency.value = 100 + (Math.random() * 200);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                const now = ctx.currentTime;
+                osc.start(now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0); // Longer decay
+                osc.stop(now + 1.0);
+            }
+        } catch(e) {}       
+    }
 
     function playGlitchSound() {
         try {
