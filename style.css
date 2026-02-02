@@ -339,7 +339,7 @@ input:focus {
 
 .particle {
     position: absolute;
-    color: rgba(255, 173, 214, 0.15); /* Faint pink */
+    color: rgba(255, 173, 214, 0.6); /* Brighter pink for visibility */
     font-size: 1.2rem;
     font-weight: 300;
     letter-spacing: 2px;
@@ -350,7 +350,7 @@ input:focus {
 
 @keyframes floatUp {
     0% { transform: translateY(100%) scale(0.8); opacity: 0; }
-    20% { opacity: 0.6; }
-    80% { opacity: 0.6; }
+    20% { opacity: 0.8; }
+    80% { opacity: 0.8; }
     100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
 }
