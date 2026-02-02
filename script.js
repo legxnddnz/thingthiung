@@ -6,9 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Screens
     const gateScreen = document.getElementById('gate-screen');
+    const tickerScreen = document.getElementById('ticker-screen');
     const agreementScreen = document.getElementById('agreement-screen');
     const posterScreen = document.getElementById('poster-screen');
     const revealScreen = document.getElementById('reveal-screen');
+
+    // Ticker Elements
+    const yearCounter = document.getElementById('year-counter');
 
     // Poster Image for effects
     const posterImg = document.querySelector('.reveal-poster');
@@ -22,32 +26,68 @@ document.addEventListener('DOMContentLoaded', () => {
         const value = passwordInput.value.trim();
         
         if (value === TARGET_DATE) {
-            goToAgreement();
+            startTickerSequence();
         } else {
             fail();
         }
     }
 
-    // Step 1: Transition from Password -> Agreement
-    function goToAgreement() {
-        // Play success sound
+    // Step 1: Password -> Ticker Sequence
+    function startTickerSequence() {
         playSuccessSound();
 
-        // UI Transitions
+        // Hide Gate
         errorMsg.classList.add('hidden');
-        
-        // Fade out gate
         gateScreen.classList.remove('active');
         gateScreen.classList.add('hidden');
+
+        // Show Ticker
+        tickerScreen.classList.remove('hidden');
+        tickerScreen.classList.add('active');
+
+        // Animate Numbers
+        let currentYear = 2024;
+        const target = "FUTURE"; 
+        const speed = 50; // ms per tick
+
+        const interval = setInterval(() => {
+            currentYear++;
+            yearCounter.innerText = currentYear;
+
+            // Random glitch effect on text sometimes?
+            // Keep it simple for now.
+
+            if (currentYear >= 2099) {
+                clearInterval(interval);
+                yearCounter.innerText = target;
+                yearCounter.classList.add('glitch-effect'); // Reuse glitch class lightly
+                
+                // Hold for a moment then go to Agreement
+                setTimeout(() => {
+                    yearCounter.classList.remove('glitch-effect');
+                    goToAgreement();
+                }, 1500);
+            }
+        }, speed);
+    }
+
+    // Step 2: Ticker -> Agreement
+    function goToAgreement() {
+        // Fade out Ticker
+        tickerScreen.classList.remove('active');
+        tickerScreen.classList.add('hidden');
 
         // Fade in Agreement
         setTimeout(() => {
             agreementScreen.classList.remove('hidden');
             agreementScreen.classList.add('active');
+            
+            // Start Particles
+            initParticles();
         }, 500); 
     }
 
-    // Step 2: Transition from Agreement -> Poster -> Reveal
+    // Step 3: Transition from Agreement -> Poster -> Reveal
     function goToReveal() {
         // Fade out Agreement
         agreementScreen.classList.remove('active');
@@ -64,8 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 3. Trigger Glitch Effect
                 posterImg.classList.add('glitch-effect');
                 
-                // Play a little synth "static" or just reuse a note? 
-                // Let's reuse a quick dissonance note for effect
                 playGlitchSound();
 
                 // 4. Hold Glitch for 1.5s then cut to black
@@ -77,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         revealScreen.classList.remove('hidden');
                         revealScreen.classList.add('active');
-                    }, 800); // Slight delay for dramatic pause
+                    }, 800); 
                     
                 }, 1500);
 
@@ -86,17 +124,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
+    // --- Particle System ---
+    function initParticles() {
+        const container = document.getElementById('particles-container');
+        const words = ["FASHION", "DREAMS", "YOUR EYES", "FUTURE", "J:RA"];
+        
+        // Spawn a particle every 800ms
+        setInterval(() => {
+            if (!agreementScreen.classList.contains('active')) return; // Stop if screen hidden
+
+            const span = document.createElement('span');
+            span.classList.add('particle');
+            span.innerText = words[Math.floor(Math.random() * words.length)];
+            
+            // Random positioning
+            span.style.left = Math.random() * 80 + 10 + "%"; // 10% to 90% width
+            
+            // Random size variation
+            const scale = Math.random() * 0.5 + 0.8;
+            span.style.fontSize = scale + "rem";
+
+            // Random Animation Duration
+            const duration = Math.random() * 10 + 10 + "s"; // 10-20s float
+            span.style.animationDuration = duration;
+
+            container.appendChild(span);
+
+            // Cleanup
+            setTimeout(() => {
+                span.remove();
+            }, 20000); // Remove after max animation time
+        }, 800);
+    }
+
+
     function playGlitchSound() {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!AudioContext) return;
             const ctx = new AudioContext();
             
-            // Dissonant Cluster
             [100, 110, 120, 800, 1200].forEach((freq, i) => {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-                osc.type = 'sawtooth'; // Harsh sound
+                osc.type = 'sawtooth'; 
                 osc.frequency.value = freq;
                 
                 const now = ctx.currentTime;
@@ -114,37 +185,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function fail() {
-        // Show error
         errorMsg.classList.remove('hidden');
-        
-        // Shake animation
         inputGroup.classList.add('shake');
-        
-        // Remove shake class after animation so it can trigger again
         setTimeout(() => {
             inputGroup.classList.remove('shake');
         }, 500);
     }
 
-    // Audio Context for the "Chime"
     function playSuccessSound() {
         try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return; // Browser doesn't support
+            if (!AudioContext) return; 
             
             const ctx = new AudioContext();
-            
-            // Notes for a C Major 7 chord (C5, E5, G5, B5) - dreamy/premium
             const notes = [523.25, 659.25, 783.99, 987.77]; 
             
             notes.forEach((freq, index) => {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 
-                osc.type = 'sine'; // Sine is smooth and clean
+                osc.type = 'sine'; 
                 osc.frequency.value = freq;
                 
-                // Stagger starts slightly for a "strum" effect
                 const startTime = ctx.currentTime + (index * 0.1);
                 const duration = 2.0;
 
@@ -153,10 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 osc.start(startTime);
                 
-                // Envelope
                 gain.gain.setValueAtTime(0, startTime);
-                gain.gain.linearRampToValueAtTime(0.2, startTime + 0.1); // Attack
-                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration); // Decay
+                gain.gain.linearRampToValueAtTime(0.2, startTime + 0.1); 
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration); 
 
                 osc.stop(startTime + duration);
             });
@@ -176,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Clear error when user starts typing again
     passwordInput.addEventListener('input', () => {
         errorMsg.classList.add('hidden');
     });
